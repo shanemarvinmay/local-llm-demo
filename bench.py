@@ -52,13 +52,10 @@ def main():
             resp = chat(client, prompt, system=system_description)
 
             print(f"Prompt {i}: {prompt_file.name}")
-
-            # TODO: Remov
             print(prompt, '\n')
             print('LLM Response:')
             print(resp, '\n')
             print('~' * 100)
-            break
 
         # Creating report on token usage
         if total_tokens == 0:
@@ -68,7 +65,7 @@ def main():
         print(f"Total output tokens: {total_tokens}")
         anthropic_cost = round(15 * total_tokens / 1_000_000, 2)
         openai_cost = round(8.75 * total_tokens / 1_000_000, 2)
-        print(f"anthropic_cost: ${anthropic_cost} \t openai_cost: ${openai_cost}")
+        print(f"anthropic_cost: ${anthropic_cost} |\t openai_cost: ${openai_cost}")
         print("Cost: $0 per request (Look at that amazing savings!)")
         print("----")
     finally:
