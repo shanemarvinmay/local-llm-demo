@@ -4,16 +4,19 @@ Run a local LLM with Ollama, benchmark latency and rough throughput, and chat wi
 
 ## What this repo includes
 
-- `bench.py`: Simple benchmark against Ollama's chat API.
+- `bench.py`: Simple benchmark against Ollama using the Python SDK.
 - `cortana_chat.py`: Interactive local chat loop with a system persona.
+- `ollama_runtime.py`: Shared runtime helpers (service check/start + model check/pull).
 - `prompts/`: Example prompts for coding, summarizing, and extraction.
-- `requirements.txt`: Python dependency list (`requests`).
+- `requirements.txt`: Python dependency list (`ollama`).
 
 ## Prerequisites
 
 - Python 3.10+
-- [Ollama](https://ollama.com/) installed and running
-- At least one local model pulled in Ollama (examples below use `qwen2.5:14b`)
+- [Ollama](https://ollama.com/) installed (CLI in your PATH)
+
+Both scripts use a fixed model: `deepseek-r1:14b`.
+If it is not present locally, the scripts auto-pull it on first run.
 
 ## Quickstart
 
@@ -37,16 +40,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Pull a model in Ollama (one-time).
-
-```bash
-ollama pull qwen2.5:14b
-```
-
 ## Run the benchmark
 
 ```bash
-python bench.py --model qwen2.5:14b --prompt "Write a Python function to dedupe a list while preserving order."
+python bench.py --prompt "Write a Python function to dedupe a list while preserving order."
 ```
 
 Optional arguments:
@@ -63,7 +60,7 @@ The benchmark prints:
 ## Run Cortana chat
 
 ```bash
-python cortana_chat.py --model qwen2.5:14b
+python cortana_chat.py
 ```
 
 Type `exit` or `quit` to stop the session.
@@ -78,14 +75,14 @@ Sample prompt starters are provided in:
 
 ## Troubleshooting
 
-- `Connection refused` to `localhost:11434`:
-  - Start Ollama and confirm it is running.
-- `model not found`:
-  - Pull the model first (for example, `ollama pull qwen2.5:14b`).
+- `Could not connect to Ollama at http://localhost:11434`:
+  - Start Ollama manually with `ollama serve`, or rerun and let the script try best-effort auto-start.
+- `Failed to pull model 'deepseek-r1:14b'`:
+  - Check internet access and disk space, then run `ollama pull deepseek-r1:14b` manually.
 - Slow responses:
-  - Use a smaller model or reduce concurrent workloads.
+  - Close other heavy workloads on your machine.
 
 ## Notes
 
 - Throughput uses a rough token estimate (`~4 chars/token`) for quick comparisons.
-- All calls are local to your machine via `http://localhost:11434/api/chat`.
+- Calls run through the local Ollama service at `http://localhost:11434` via the Ollama Python SDK.

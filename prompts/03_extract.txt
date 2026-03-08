@@ -1,0 +1,9 @@
+Extract structured data as JSON with keys:
+- company
+- product
+- price
+- date
+- notes
+
+Text:
+Yesterday I bought a Logitech MX Master 3S for $89.99 from Amazon on March 3, 2026. It was on sale.
