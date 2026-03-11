@@ -22,10 +22,6 @@ def chat(client: Client, messages: list[dict], temperature: float = 0.3) -> str:
         messages=messages,
         options={"temperature": temperature},
     )
-    print(response)
-    print()
-    print(response["message"])
-    print()
     return response["message"]["content"]
 
 
@@ -37,9 +33,16 @@ def main():
 
         msgs = [{"role": "system", "content": CORTANA_SYSTEM}]
 
-        print("Cortana (Budget Edition) - local chat. Type 'exit' to quit.")
+        print(f"Cortana (Budget Edition) - local chat using {DEFAULT_MODEL}. Type 'exit' to quit.")
         while True:
-            user = input("\nYou: ").strip()
+            try:
+                user = input("\nYou: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\nCortana: Alright. Going dark. (Locally.)")
+                break
+
+            if not user:
+                continue
             if user.lower() in {"exit", "quit"}:
                 print("Cortana: Alright. Going dark. (Locally.)")
                 break

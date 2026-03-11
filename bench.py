@@ -10,6 +10,7 @@ from ollama_runtime import (
 
 total_tokens = 0
 
+
 def chat(client: Client, prompt: str, system: str | None = None, temperature: float = 0.2) -> str:
     global total_tokens
     messages = []
@@ -25,8 +26,6 @@ def chat(client: Client, prompt: str, system: str | None = None, temperature: fl
     )
     total_tokens += response.prompt_eval_count + response.eval_count    
     return response["message"]["content"]
-
-
 def main():
     # Setting up LLM
     client = create_client()
@@ -40,6 +39,7 @@ def main():
             raise SystemExit(f"No prompt files found in: {prompts_dir.resolve()}")
 
         print(f"Model: {DEFAULT_MODEL}")
+        print(f"Prompt directory: {prompts_dir.resolve()}")
         system_description = "You are a helpful assistant."
         print("----")
 
@@ -49,7 +49,12 @@ def main():
                 print(f"Prompt {i}: {prompt_file.name} skipped (empty file)")
                 continue
 
-            resp = chat(client, prompt, system=system_description)
+            resp = chat(
+                client,
+                prompt,
+                system=system_description,
+                temperature=0.2,
+            )
 
             print(f"Prompt {i}: {prompt_file.name}")
             print(prompt, '\n')
@@ -62,7 +67,7 @@ def main():
             raise SystemExit("No non-empty prompts were found to run.")
 
         print("----")
-        print(f"Total output tokens: {total_tokens}")
+        print(f"Total estimated tokens processed: {total_tokens}")
         anthropic_cost = round(15 * total_tokens / 1_000_000, 2)
         openai_cost = round(8.75 * total_tokens / 1_000_000, 2)
         print(f"anthropic_cost: ${anthropic_cost} |\t openai_cost: ${openai_cost}")
